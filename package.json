@@ -1,0 +1,27 @@
+{
+  "name": "magic-fetch",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "unit": "ava --verbose",
+    "test": "nyc --reporter=html ava"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "ava": "^0.16.0",
+    "chai": "^3.5.0",
+    "dirty-chai": "^1.2.2",
+    "mocha": "^3.1.2",
+    "nock": "^9.0.2",
+    "node-fetch": "^1.0.0",
+    "nyc": "^8.4.0",
+    "sinon": "^1.17.6"
+  },
+  "ava": {
+    "files": [
+      "test/*.test.js"
+    ]
+  }
+}
