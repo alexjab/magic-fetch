@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "unit": "ava --verbose",
-    "test": "nyc --reporter=html ava"
+    "test": "nyc --reporter=html ava",
+    "doc": "doctoc ./README.md"
   },
   "author": "",
   "license": "MIT",
@@ -13,6 +14,7 @@
     "ava": "^0.16.0",
     "chai": "^3.5.0",
     "dirty-chai": "^1.2.2",
+    "doctoc": "^1.2.0",
     "mocha": "^3.1.2",
     "nock": "^9.0.2",
     "node-fetch": "^1.0.0",
