@@ -4,8 +4,10 @@
   "description": "A queue system for fetch",
   "main": "index.js",
   "scripts": {
-    "unit": "ava --verbose",
-    "test": "nyc --reporter=html ava",
+    "test:unit": "ava --verbose",
+    "test:cover": "nyc --reporter=html --reporter=lcov ava",
+    "test:report": "codeclimate-test-reporter < coverage/lcov.info",
+    "test": "npm run test:cover && npm run test:report",
     "doc": "doctoc ./README.md"
   },
   "author": "jablon.me",
@@ -13,6 +15,7 @@
   "devDependencies": {
     "ava": "^0.16.0",
     "chai": "^3.5.0",
+    "codeclimate-test-reporter": "^0.4.0",
     "dirty-chai": "^1.2.2",
     "doctoc": "^1.2.0",
     "mocha": "^3.1.2",

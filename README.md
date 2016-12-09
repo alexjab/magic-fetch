@@ -1,4 +1,5 @@
 [![CircleCI](https://circleci.com/gh/alexjab/magic-fetch.svg?style=svg)](https://circleci.com/gh/alexjab/magic-fetch)
+[![Test Coverage](https://codeclimate.com/github/alexjab/magic-fetch/badges/coverage.svg)](https://codeclimate.com/github/alexjab/magic-fetch/coverage)
 
 # magic-fetch
 
