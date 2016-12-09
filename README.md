@@ -1,38 +1,35 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**
-
-- [magic-fetch](#magic-fetch)
-    - [About](#about)
-    - [Table of content](#table-of-content)
-    - [TL;DR](#tldr)
-    - [Create a queue](#create-a-queue)
-    - [Method helpers](#method-helpers)
-    - [Events](#events)
-    - [Middleware](#middleware)
-      - [Request middleware](#request-middleware)
-      - [Response middleware](#response-middleware)
-      - [Error middleware](#error-middleware)
-      - [Queue handler](#queue-handler)
-      - [Connect middleware](#connect-middleware)
-      - [Combine middleware](#combine-middleware)
-    - [License](#license)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+[![CircleCI](https://circleci.com/gh/alexjab/magic-fetch.svg?style=svg)](https://circleci.com/gh/alexjab/magic-fetch)
 
 # magic-fetch
 
 ### About
 `magic-fetch` is a wrapper around `fetch`. Its purpose is to give you greater control over
-your HTTP queries.
+your HTTP requests.
 
-`magic-fetch` works as a queue. You push your queries, and they get sent over HTTP using
+`magic-fetch` works as a queue. You push your requests, and they get sent over HTTP using
 fetch. If you `push` a query while one is already being processed, the second one will be
 queued, then sent when the first one finishes and so on.
 
 When creating a queue, you need to pass an instance of `fetch`.
 
 ### Table of content
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [TL;DR](#tldr)
+- [Create a queue](#create-a-queue)
+- [Method helpers](#method-helpers)
+- [Events](#events)
+- [Middleware](#middleware)
+  - [Request middleware](#request-middleware)
+  - [Response middleware](#response-middleware)
+  - [Error middleware](#error-middleware)
+  - [Queue handler](#queue-handler)
+  - [Connect middleware](#connect-middleware)
+  - [Combine middleware](#combine-middleware)
+- [License](#license)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ### TL;DR
 

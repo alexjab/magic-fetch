@@ -1,14 +1,14 @@
 {
   "name": "magic-fetch",
   "version": "0.0.1",
-  "description": "",
+  "description": "A queue system for fetch",
   "main": "index.js",
   "scripts": {
     "unit": "ava --verbose",
     "test": "nyc --reporter=html ava",
     "doc": "doctoc ./README.md"
   },
-  "author": "",
+  "author": "jablon.me",
   "license": "MIT",
   "devDependencies": {
     "ava": "^0.16.0",

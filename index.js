@@ -1,3 +1,5 @@
+'use strict';
+
 const EventEmitter = require('events');
 
 const STATES = {
@@ -57,10 +59,10 @@ function makeRequest(fetch, request) {
 }
 
 function createQueue(fetch) {
-  const requestMiddleware = this.requestMiddleware || DEFAULT_MIDDLEWARE.REQUEST;
-  const responseMiddleware = this.responseMiddleware || DEFAULT_MIDDLEWARE.RESPONSE;
-  const errorMiddleware = this.errorMiddleware || DEFAULT_MIDDLEWARE.ERROR;
-  const queueHandler = this.queueHandler || DEFAULT_QUEUE_HANDLER;
+  const requestMiddleware = this && this.requestMiddleware || DEFAULT_MIDDLEWARE.REQUEST;
+  const responseMiddleware = this && this.responseMiddleware || DEFAULT_MIDDLEWARE.RESPONSE;
+  const errorMiddleware = this && this.errorMiddleware || DEFAULT_MIDDLEWARE.ERROR;
+  const queueHandler = this && this.queueHandler || DEFAULT_QUEUE_HANDLER;
 
   const ee = new EventEmitter();
 
