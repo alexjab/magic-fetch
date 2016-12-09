@@ -234,6 +234,51 @@ test('[requestMiddleware] > should pass req to the request middleware', async t 
   t.pass();
 });
 
+test('[responseMiddleware] > if an error happens, it should not nack the response', async t => {
+  const host = newHost();
+  let responseCalls = 0;
+  const createDefaultQueue = connectMiddleware(res => {
+    responseCalls++;
+    throw new Error();
+  })(createQueue);
+  const queue = createDefaultQueue(fetch);
+
+  nock(host).get('/').reply(200);
+
+  await queue.push({
+    url: host + '/'
+  });
+
+  expect(responseCalls).to.equal(1);
+
+  t.pass();
+});
+
+test('[responseMiddleware] > if an error happens, it should emit an `unhandledError` event', async t => {
+  const host = newHost();
+  const createDefaultQueue = connectMiddleware(null, res => {
+    throw new Error('Foo bar');
+  })(createQueue);
+  const queue = createDefaultQueue(fetch);
+
+  nock(host).get('/').reply(200);
+
+  queue.push({
+    url: host + '/'
+  });
+
+  let error;
+  await new Promise((resolve) => queue.on('unhandledError', (err) => {
+    error = err;
+    resolve();
+  }));
+
+  expect(error).to.exist();
+  expect(error).to.have.property('message', 'Foo bar');
+
+  t.pass();
+});
+
 test('[responseMiddleware] > should go through the response middleware', async t => {
   const host = newHost();
   let responseCalls = 0;
@@ -280,6 +325,58 @@ test('[responseMiddleware] > should pass res and req object to the response midd
   expect(firstCall[0]).to.have.property('headers');
   expect(firstCall[0]).to.have.property('text');
   expect(firstCall[1]).to.equal(req);
+
+  t.pass();
+});
+
+test('[requestMiddleware] > if an error happens, it should not block the queue', async t => {
+  const host = newHost();
+  let requestCalls = 0;
+  const createDefaultQueue = connectMiddleware(req => {
+    if (req.url.match(/foo/)) {
+      throw new Error();
+    }
+    requestCalls++;
+  })(createQueue);
+  const queue = createDefaultQueue(fetch);
+
+  nock(host).get('/bar').reply(200);
+
+  await queue.push({
+    url: host + '/foo'
+  });
+  await queue.push({
+    url: host + '/bar'
+  });
+
+  expect(requestCalls).to.equal(1);
+
+  t.pass();
+});
+
+test('[requestMiddleware] > if an error happens, it should emit an `unhandledError` event', async t => {
+  const host = newHost();
+  const createDefaultQueue = connectMiddleware(req => {
+    throw new Error('Foo bar');
+  })(createQueue);
+  const queue = createDefaultQueue(fetch);
+
+  nock(host).get('/').reply(200);
+
+  let error;
+  const errorPromise = new Promise((resolve) => queue.on('unhandledError', (err) => {
+    error = err;
+    resolve();
+  }))
+
+  queue.push({
+    url: host + '/'
+  });
+
+  await errorPromise;
+
+  expect(error).to.exist();
+  expect(error).to.have.property('message', 'Foo bar');
 
   t.pass();
 });
@@ -335,6 +432,51 @@ test.serial('[errorMiddleware] > should err and request to the error middleware'
   const firstCall = errorCalls[0];
   expect(firstCall[0]).to.be.instanceOf(Error);
   expect(firstCall[1]).to.equal(req);
+
+  t.pass();
+});
+
+test('[errorMiddleware] > if an error happens, it should not nack the response', async t => {
+  const host = newHost();
+  let errorCalls = 0;
+  const createDefaultQueue = connectMiddleware(null, null, err => {
+    errorCalls++;
+    throw new Error();
+  })(createQueue);
+  const queue = createDefaultQueue(fetch);
+
+  nock(host).get('/').replyWithError('SOME_ERROR');
+
+  await queue.push({
+    url: host + '/'
+  });
+
+  expect(errorCalls).to.equal(1);
+
+  t.pass();
+});
+
+test('[errorMiddleware] > if an error happens, it should emit an `unhandledError` event', async t => {
+  const host = newHost();
+  const createDefaultQueue = connectMiddleware(null, null, err => {
+    throw new Error('Foo bar');
+  })(createQueue);
+  const queue = createDefaultQueue(fetch);
+
+  nock(host).get('/').replyWithError('SOME_ERROR');
+
+  queue.push({
+    url: host + '/'
+  });
+
+  let error;
+  await new Promise((resolve) => queue.on('unhandledError', (err) => {
+    error = err;
+    resolve();
+  }));
+
+  expect(error).to.exist();
+  expect(error).to.have.property('message', 'Foo bar');
 
   t.pass();
 });

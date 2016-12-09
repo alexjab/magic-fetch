@@ -23,8 +23,6 @@ class Deferred {
 }
 
 function applyDefaultRequest(request) {
-  if (!request.url) throw new Error('Field url is required in request');
-
   request.method = request.method || 'GET';
   request.headers = request.headers || {};
   request._deferred = new Deferred();
@@ -34,6 +32,7 @@ function applyDefaultRequest(request) {
 
 function makeRequest(fetch, request) {
   const { url, method, headers, body, credentials } = request;
+  if (!url) return Promise.reject(new Error('Field url is required in request'));
 
   return fetch(url, {
     method,
@@ -118,7 +117,12 @@ function createQueue(fetch) {
     state = STATES.BUSY;
 
     let originalRequest = queue[0];
-    const request = requestMiddleware(originalRequest);
+    let request;
+    try {
+      request = requestMiddleware(originalRequest);
+    } catch(error) {
+      ee.emit('unhandledError', error);
+    }
 
     let isNacked = false;
     let err = null;
@@ -136,7 +140,8 @@ function createQueue(fetch) {
         .then(response => {
           if (!response) return null;
           res = responseMiddleware(response, request);
-        });
+        })
+        .catch(err => ee.emit('unhandledError', err));
     }
 
     action.then(() => queueHandler(err, res, request))
@@ -164,7 +169,8 @@ function createQueue(fetch) {
     put,
     patch,
     del,
-    delete: del
+    delete: del,
+    on: ee.on.bind(ee)
   };
 }
 
