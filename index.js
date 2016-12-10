@@ -46,7 +46,7 @@ function makeRequest(fetch, request) {
     const { status, statusText, ok, headers, url } = response;
 
     return response.text().then(text => {
-      return {
+      const payload = {
         response,
         headers,
         ok,
@@ -54,6 +54,15 @@ function makeRequest(fetch, request) {
         statusText,
         text
       };
+
+      if (response.headers.get('content-type') === 'application/json') {
+        try {
+          payload.body = JSON.parse(text);
+        } catch(error) {
+          payload.body = {};
+        }
+      }
+      return payload;
     })
   });
 }

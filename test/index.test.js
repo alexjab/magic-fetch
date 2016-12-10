@@ -95,6 +95,61 @@ test('queue.push > should throw an error (no url specified)', async t => {
   t.pass();
 });
 
+test('queue.push > should parse a JSON body (response has a Content-Type: application/json)', async t => {
+  const host = newHost();
+  const queue = createQueue(fetch);
+
+  nock(host).get('/').reply(200, { foo: 'bar' });
+
+  const response = await queue.push({
+    url: host + '/'
+  });
+
+  expect(response).to.have.property('body');
+  expect(response.body).to.deep.equal({ foo: 'bar' });
+  expect(response).to.have.property('text');
+  expect(response.text).to.equal('{"foo":"bar"}');
+
+  t.pass();
+});
+
+test('queue.push > should not parse a JSON body (response is not JSON)', async t => {
+  const host = newHost();
+  const queue = createQueue(fetch);
+
+  nock(host).get('/').reply(200, 'FOO_BAR');
+
+  const response = await queue.push({
+    url: host + '/'
+  });
+
+  expect(response).to.not.have.property('body');
+  expect(response).to.have.property('text');
+  expect(response.text).to.equal('FOO_BAR');
+
+  t.pass();
+});
+
+test('queue.push > should return an empty body {} (response is invalid JSON)', async t => {
+  const host = newHost();
+  const queue = createQueue(fetch);
+
+  nock(host).get('/').reply(200, '{"foo":"bar"]', {
+    'Content-Type': 'application/json'
+  });
+
+  const response = await queue.push({
+    url: host + '/'
+  });
+
+  expect(response).to.have.property('body');
+  expect(response.body).to.deep.equal({});
+  expect(response).to.have.property('text');
+  expect(response.text).to.equal('{"foo":"bar"]');
+
+  t.pass();
+});
+
 test('queue.get > should make a GET request', async t => {
   const host = newHost();
   const queue = createQueue(fetch);

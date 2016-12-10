@@ -8,19 +8,19 @@
 your HTTP requests.
 
 `magic-fetch` works as a queue. You push your requests, and they get sent over HTTP using
-fetch. If you `push` a query while one is already being processed, the second one will be
+`fetch`. If you `push` a query while one is already being processed, the second one will be
 queued, then sent when the first one finishes and so on.
-
-When creating a queue, you need to pass an instance of `fetch`.
 
 ### Table of content
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
+
 - [TL;DR](#tldr)
 - [Create a queue](#create-a-queue)
 - [Method helpers](#method-helpers)
 - [Events](#events)
+- [JSON](#json)
 - [Middleware](#middleware)
   - [Request middleware](#request-middleware)
   - [Response middleware](#response-middleware)
@@ -58,7 +58,7 @@ Parameters:
  - `headers` (Object, Headers) - Default: `{}`
  - `credentials` (String) - Authentication credentials mode.
 
-See [https://github.github.io/fetch/](https://github.github.io/fetch/) for more information.
+When creating a queue, you need to pass an instance of `fetch`. If your browser environment does not have a native support for it (or you are cautious and want to ship one to your users nevertheless), you can use a polyfill; see [https://github.github.io/fetch/](https://github.github.io/fetch/) for more information.
 
 ### Create a queue
 
@@ -85,6 +85,12 @@ queue.on('unhandledError', (err) => ...);
 ```
 
  - `unhandledError`: emitted when your request / response / error middleware throws an error.
+
+### JSON
+If the **response** from the server contains a `Content-Type: application/json` header, then the response passed to your response middleware will contain an additional field named
+`body`, which will be the JSON body sent by the server, if it is valid. If it's not valid, it will just be an empty object `{}`.
+
+To add support for JSON in the **request**, [read this](https://github.com/github/fetch#post-json) (TL;DR: add a `Content-Type: application/json` header and set the `body` field to your stringified JSON).
 
 ### Middleware
 There are four sorts of middleware that you can add to your queues in order to extend their features. For example, you may add a middleware that will add headers for authentication.
