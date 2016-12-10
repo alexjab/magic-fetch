@@ -15,6 +15,8 @@ const DEFAULT_MIDDLEWARE = {
 
 const DEFAULT_QUEUE_HANDLER = () => null;
 
+const CONTENT_TYPE_REGEX = /application\/json/;
+
 class Deferred {
   constructor() {
     this.Promise = new Promise((resolve, reject) => {
@@ -55,7 +57,7 @@ function makeRequest(fetch, request) {
         text
       };
 
-      if (response.headers.get('content-type') === 'application/json') {
+      if (CONTENT_TYPE_REGEX.test(response.headers.get('content-type'))) {
         try {
           payload.body = JSON.parse(text);
         } catch(error) {
