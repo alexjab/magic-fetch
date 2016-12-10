@@ -28,5 +28,9 @@
     "files": [
       "test/*.test.js"
     ]
+  },
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/alexjab/magic-fetch.git"
   }
 }
